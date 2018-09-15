@@ -1,39 +1,41 @@
 package goodr0ne.trampwitter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.google.gson.JsonObject;
 
-@Entity
 public class TrampWeet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String json;
+    private String body;
+    private long timestamp;
 
-    public TrampWeet() {
-        id = Long.parseLong("1337");
-        json = "default constructed";
+    TrampWeet() {
+        id = (long)1337;
+        body = "default constructed";
+        timestamp = 1337;
     }
 
-    public TrampWeet(String json) {
-        this.json = json;
+    TrampWeet(JsonObject jsonObj) {
+        try {
+            id = jsonObj.get("id").getAsLong();
+        } catch (Exception e) {
+            id = (long)7331;
+        }
+        try {
+            timestamp = jsonObj.get("timestamp").getAsLong();
+        } catch (Exception e) {
+            timestamp = 7331;
+        }
+        try {
+            body = jsonObj.get("body").getAsString();
+        } catch (Exception e) {
+            body = "Error while constructed from JsonObject.get(body)";
+        }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getJson() {
-        return json;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setJson(String json) {
-        this.json = json;
+    JsonObject getAsJson() {
+        JsonObject results = new JsonObject();
+        results.addProperty("id", id);
+        results.addProperty("timestamp", timestamp);
+        results.addProperty("body", body);
+        return results;
     }
 }
