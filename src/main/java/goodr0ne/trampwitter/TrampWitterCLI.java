@@ -5,21 +5,30 @@ import org.springframework.shell.standard.ShellMethod;
 
 @ShellComponent
 public class TrampWitterCLI {
+    private boolean isLaunched = false;
 
     @ShellMethod("Launch TrampWeet Crawler")
-    public String launch() {
-        return "TrampWeet is operational, wait for more tweets\n"
-                + "You can hide crawler output by printing verbose --disable in console";
+    public void launch() {
+        if (!isLaunched) {
+            isLaunched = true;
+            System.out.println("TrampWeet is operational, wait for more tweets\n"
+                    + "You can hide crawler output by printing verbose --disable in console");
+            System.out.println(TrampWitterUtils.crawlTweet());
+        } else {
+            System.out.println("TrampWeet is already launched");
+        }
     }
 
-    @ShellMethod("Turn TrampWeet crawler output on/off")
+    @ShellMethod("Turn TrampWeet crawler output on (without args) or off (--disable)")
     public String verbose(boolean disable) {
         String output;
+        TrampWitterUtils.setIsVerbose(!disable);
         if (!disable) {
             output = "Crawler output enabled, enjoy full version!";
         } else {
             output = "Crawler output disabled, yeah, it's annoying...";
         }
+        System.out.println("Verbose status - " + TrampWitterUtils.getIsVerbose());
         return output;
     }
 

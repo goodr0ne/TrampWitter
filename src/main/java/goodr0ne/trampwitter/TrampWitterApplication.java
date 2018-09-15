@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TrampwitterApplication {
+public class TrampWitterApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TrampwitterApplication.class, args);
+        SpringApplication.run(TrampWitterApplication.class, args);
     }
 }
