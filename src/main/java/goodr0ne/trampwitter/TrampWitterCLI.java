@@ -4,7 +4,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
 @ShellComponent
-public class TrampWeetCLI {
+public class TrampWitterCLI {
 
     @ShellMethod("Launch TrampWeet Crawler")
     public String launch() {
