@@ -1,5 +1,6 @@
 package goodr0ne.trampwitter;
 
+import com.google.gson.JsonObject;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
@@ -13,7 +14,7 @@ public class TrampWitterCLI {
             isLaunched = true;
             System.out.println("TrampWeet is operational, wait for more tweets\n"
                     + "You can show crawler output by printing verbose in console");
-            System.out.println(TrampWitterCrawler.crawlTweet());
+            TrampWitterCrawler.crawlTweet();
         } else {
             System.out.println("TrampWeet is already launched");
         }
@@ -23,6 +24,7 @@ public class TrampWitterCLI {
     public String verbose(boolean disable) {
         String output;
         TrampWitterCrawler.setIsVerbose(!disable);
+        TrampWeetRepoConnector.getInstance().setVerbose(!disable);
         if (!disable) {
             output = "Crawler output enabled, enjoy full version!";
         } else {
@@ -36,13 +38,19 @@ public class TrampWitterCLI {
     public String trampweet() {
         TrampWeet[] trampWeets = TrampWeetRepoConnector.getInstance().getAllTweets();
         if (trampWeets.length > 0) {
-            for (TrampWeet trampWeet : trampWeets) {
-                System.out.println(trampWeet.getAsJson());
+            for (int i = 0; i < trampWeets.length; i++) {
+                if (i < 10) {
+                    JsonObject trampWeetObj = trampWeets[i].getAsJson();
+                    System.out.println("\n" + (i + 1)
+                            + ". " + trampWeetObj.get("body").getAsString());
+                } else {
+                    break;
+                }
             }
         } else {
             System.out.println("There is no TrampWeets to display");
         }
-        return "BUILD THE WALL!!";
+        return "\nBUILD THE WALL!!\n";
     }
 
     @ShellMethod("Clean all stored TrampWeets")
@@ -63,12 +71,12 @@ public class TrampWitterCLI {
     }
 
     @ShellMethod("Manually crawl bunch of those")
-    public String crawl() {
-        return TrampWitterCrawler.crawlTweet();
+    public void crawl() {
+        TrampWitterCrawler.crawlTweet();
     }
 
     @ShellMethod("Test TrampWeet insertion (debug mode only)")
     public void test() {
-        TrampWeetRepoConnector.getInstance().insertTweet(new TrampWeet());
+        TrampWeetRepoConnector.getInstance().insertTestTweet();
     }
 }

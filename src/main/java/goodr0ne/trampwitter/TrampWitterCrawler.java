@@ -18,7 +18,7 @@ class TrampWitterCrawler {
         return isVerbose;
     }
 
-    static String crawlTweet() {
+    static void crawlTweet() {
         String jsonData = "Trump tweets for e1337s";
         try {
             Document doc = Jsoup.connect("https://twitter.com/realdonaldtrump").get();
@@ -44,6 +44,8 @@ class TrampWitterCrawler {
         catch (Exception e) {
             System.out.println("error occurred with twitter crawler");
         }
-        return jsonData;
+        if (isVerbose) {
+            System.out.println(jsonData);
+        }
     }
 }

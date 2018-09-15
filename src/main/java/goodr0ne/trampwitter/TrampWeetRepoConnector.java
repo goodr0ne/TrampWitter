@@ -25,16 +25,25 @@ class TrampWeetRepoConnector {
     private final String USER = "sa";
     private final String PASS = "";
     private boolean isCreated = false;
+    private boolean verbose = false;
 
     private Connection conn = null;
     Statement stmt = null;
 
+    synchronized void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     private synchronized void createTable() {
-        System.out.println("Hello, i'm TrampWeetRepoConnector.createTable()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.createTable()!");
+        }
         stmt = null;
         if (isCreated) {
-            System.out.println("Table already created");
-            System.out.println("Goodbye, that was TrampWeetRepoConnector.createTable()!");
+            if (verbose) {
+                System.out.println("Table already created");
+                System.out.println("Goodbye, that was TrampWeetRepoConnector.createTable()!");
+            }
             return;
         }
         try {
@@ -42,12 +51,14 @@ class TrampWeetRepoConnector {
             String sql = "CREATE TABLE IF NOT EXISTS trampweets " +
                     "(id BIGINT not NULL," +
                     " timestamp BIGINT not NULL," +
-                    " body VARCHAR(1255) UNIQUE, " +
+                    " body varchar(1255) UNIQUE, " +
                     " PRIMARY KEY ( id ))";
             stmt.executeUpdate(sql);
             stmt.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -58,11 +69,15 @@ class TrampWeetRepoConnector {
         }
         flushTable();
         isCreated = true;
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.createTable()!");
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.createTable()!");
+        }
     }
 
     synchronized void flushTable() {
-        System.out.println("Hello, i'm TrampWeetRepoConnector.flushTable()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.flushTable()!");
+        }
         stmt = null;
         try {
             stmt = conn.createStatement();
@@ -70,7 +85,9 @@ class TrampWeetRepoConnector {
             stmt.executeUpdate(sql);
             stmt.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -79,11 +96,15 @@ class TrampWeetRepoConnector {
                         "TrampWeetRepoConnector.flushTable()!");
             }
         }
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.flushTable()!");
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.flushTable()!");
+        }
     }
 
     synchronized void deleteTable() {
-        System.out.println("Hello, i'm TrampWeetRepoConnector.deleteTable()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.deleteTable()!");
+        }
         stmt = null;
         try {
             stmt = conn.createStatement();
@@ -91,7 +112,9 @@ class TrampWeetRepoConnector {
             stmt.executeUpdate(sql);
             stmt.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -100,26 +123,33 @@ class TrampWeetRepoConnector {
                         "TrampWeetRepoConnector.deleteTable()!");
             }
         }
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.deleteTable()!");
+        isCreated = false;
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.deleteTable()!");
+        }
     }
 
     synchronized void insertTweet(TrampWeet tweet) {
-        System.out.println("Hello, i'm TrampWeetRepoConnector.insertTweet()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.insertTweet()!");
+        }
         if (!isCreated) {
             createTable();
         }
-        PreparedStatement stmt = null;
+        stmt = null;
         try {
             JsonObject tweetObj = tweet.getAsJson();
-            String myStmt = "INSERT INTO trampweets (id, timestamp, body) VALUES (?, ?, ?)";
-            System.out.println("Trying to insert next tweet:\n" + tweetObj.toString());
-            stmt = conn.prepareStatement(myStmt);
-            stmt.setLong(1, tweetObj.get("id").getAsLong());
-            stmt.setLong(2, tweetObj.get("timestamp").getAsLong());
-            stmt.setString(3, tweetObj.get("body").getAsString());
+            stmt = conn.createStatement();
+            String myStmt = "INSERT INTO trampweets (id, timestamp, body) VALUES ("
+                    + tweetObj.get("id").getAsLong() + ", "
+                    + tweetObj.get("timestamp").getAsLong() + ", '"
+                    +tweetObj.get("body").getAsString()  + "')";
+            stmt.executeUpdate(myStmt);
             stmt.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                System.out.println("This tweet already crawled!");
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -128,11 +158,52 @@ class TrampWeetRepoConnector {
                         "TrampWeetRepoConnector.insertTweet()!");
             }
         }
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.insertTweet()!");
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.insertTweet()!");
+        }
+    }
+
+    synchronized void insertTestTweet() {
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.insertTestTweet()!");
+        }
+        if (!isCreated) {
+            createTable();
+        }
+        stmt = null;
+        try {
+            JsonObject tweetObj = new JsonObject();
+            tweetObj.addProperty("id", 1337);
+            tweetObj.addProperty("timestamp", 7331);
+            tweetObj.addProperty("body", "testing");
+            String sql = "INSERT INTO trampweets VALUES (1337, 7331, 'testing')";
+            if (verbose) {
+                System.out.println("Trying to insert next tweet:\n" + tweetObj.toString());
+            }
+            stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            stmt.close();
+        } catch(Exception e) {
+            if (verbose) {
+                e.printStackTrace();
+            }
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+                System.out.println("Error with finally block in " +
+                        "TrampWeetRepoConnector.insertTestTweet()!");
+            }
+        }
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.insertTestTweet()!");
+        }
     }
 
     synchronized TrampWeet[] getAllTweets() {
-        System.out.println("Hello, i'm TrampWeetRepoConnector.getAllTweets()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.getAllTweets()!");
+        }
         if (!isCreated) {
             createTable();
         }
@@ -157,7 +228,9 @@ class TrampWeetRepoConnector {
             stmt.close();
             return tweets;
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -166,13 +239,17 @@ class TrampWeetRepoConnector {
                         "TrampWeetRepoConnector.getAllTweets()!");
             }
         }
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.getAllTweets()!");
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.getAllTweets()!");
+        }
         return new TrampWeet[0];
     }
 
     synchronized int recount() {
         int count = -1;
-        System.out.println("Hello, i'm TrampWeetRepoConnector.recount()!");
+        if (verbose) {
+            System.out.println("Hello, i'm TrampWeetRepoConnector.recount()!");
+        }
         if (!isCreated) {
             createTable();
         }
@@ -187,7 +264,9 @@ class TrampWeetRepoConnector {
             rs.close();
             stmt.close();
         } catch(Exception e) {
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         } finally {
             try {
                 if (stmt != null) stmt.close();
@@ -196,7 +275,16 @@ class TrampWeetRepoConnector {
                         "TrampWeetRepoConnector.recount()!");
             }
         }
-        System.out.println("Goodbye, that was TrampWeetRepoConnector.recount()!");
+        if (verbose) {
+            System.out.println("Goodbye, that was TrampWeetRepoConnector.recount()!");
+        }
+        if (count < 0) {
+            if (verbose) {
+                System.out.println("All tweets are gone with table itself! Let's start it again...");
+            }
+            isCreated = false;
+            createTable();
+        }
         return count;
     }
 }
