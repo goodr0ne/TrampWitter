@@ -33,14 +33,14 @@ class TrampWitterCrawler {
             long timestamp = System.currentTimeMillis();
             for (int i = 0; i < tweets.size(); i++) {
                 String body = tweets.get(i).text();
-                if (isVerbose) {
-                    System.out.println(body);
-                }
                 JsonObject tweetObj = new JsonObject();
                 tweetObj.addProperty("id", new Random().nextLong());
                 tweetObj.addProperty("timestamp", timestamp - i);
                 tweetObj.addProperty("body", body);
                 trampWeets[i] = new TrampWeet(tweetObj);
+                if (isVerbose) {
+                    System.out.println(trampWeets[i].getAsJson().toString());
+                }
                 TrampWeetRepoConnector.getInstance().insertTweet(trampWeets[i]);
             }
         }
