@@ -2,7 +2,11 @@ package goodr0ne.trampwitter;
 
 import com.google.gson.JsonObject;
 
-public class TrampWeet {
+/**
+ * TrampWeet entity class, representing one single tweet of Donald Trump
+ * In fact serialized and deserialized from json object
+ */
+class TrampWeet {
     private Long id;
     private String body;
     private long timestamp;

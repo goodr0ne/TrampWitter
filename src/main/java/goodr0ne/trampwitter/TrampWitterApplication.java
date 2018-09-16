@@ -13,6 +13,11 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 @SpringBootApplication
 public class TrampWitterApplication {
 
+    /**
+     * Two spring boot modules will be launched: quartz job for automatic tweets crawling,
+     * placed here, and shell instance with operating commands at TrampWitterCLI class
+     * @param args sgra
+     */
     public static void main(String[] args) {
         SpringApplication.run(TrampWitterApplication.class, args);
     }

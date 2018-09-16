@@ -4,6 +4,10 @@ import com.google.gson.JsonObject;
 
 import java.sql.*;
 
+/**
+ * Data access class for all db-level operations. Singleton. All operations are
+ * thread-locked (synchronized)
+ */
 class TrampWeetRepoConnector {
     private static TrampWeetRepoConnector singleton = new TrampWeetRepoConnector();
 
@@ -11,6 +15,10 @@ class TrampWeetRepoConnector {
         return singleton;
     }
 
+    /**
+     * Creates single db connection upon initialization, used in all interactions.
+     * H2 in-memory database is used as storage.
+     */
     private TrampWeetRepoConnector() {
         try {
             Class.forName(JDBC_DRIVER);
@@ -28,12 +36,19 @@ class TrampWeetRepoConnector {
     private boolean verbose = false;
 
     private Connection conn = null;
-    Statement stmt = null;
+    private Statement stmt = null;
 
+    /**
+     * Turns outputs onn & off. Defaulted as off.
+     * @param verbose boolean - true means on
+     */
     synchronized void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
 
+    /**
+     * Creates table for tweet entities in db, if not already created.
+     */
     private synchronized void createTable() {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.createTable()!");
@@ -74,6 +89,9 @@ class TrampWeetRepoConnector {
         }
     }
 
+    /**
+     * Cleans table from all stored entries
+     */
     synchronized void flushTable() {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.flushTable()!");
@@ -101,6 +119,9 @@ class TrampWeetRepoConnector {
         }
     }
 
+    /**
+     * Deletes table itself from db
+     */
     synchronized void deleteTable() {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.deleteTable()!");
@@ -129,6 +150,10 @@ class TrampWeetRepoConnector {
         }
     }
 
+    /**
+     * Insert one Trump tweet into table, if it is not exist (checked by body attribute)
+     * @param tweet Expected TrampTweet entity class, then serialized into JsonObject
+     */
     synchronized void insertTweet(TrampWeet tweet) {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.insertTweet()!");
@@ -163,6 +188,9 @@ class TrampWeetRepoConnector {
         }
     }
 
+    /**
+     * Insert single hardcoded tweet for testing purposes.
+     */
     synchronized void insertTestTweet() {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.insertTestTweet()!");
@@ -200,6 +228,10 @@ class TrampWeetRepoConnector {
         }
     }
 
+    /**
+     * Read all stored in db Trump Tweets.
+     * @return array of TrampTweet[] entities
+     */
     synchronized TrampWeet[] getAllTweets() {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.getAllTweets()!");
@@ -245,6 +277,11 @@ class TrampWeetRepoConnector {
         return new TrampWeet[0];
     }
 
+    /**
+     * Simple Count(*) for means of testing
+     * @return integer, representing quantity of tweets in table, -1 means exception,
+     * usually that table is not exist
+     */
     synchronized int recount() {
         int count = -1;
         if (verbose) {

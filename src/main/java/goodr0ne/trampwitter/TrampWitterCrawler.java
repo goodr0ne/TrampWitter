@@ -18,6 +18,9 @@ class TrampWitterCrawler {
         return isVerbose;
     }
 
+    /**
+     * Pumping all http data from Trump Tweeter and store new entries to db
+     */
     static void crawlTweet() {
         String jsonData = "Trump tweets for e1337s";
         try {
