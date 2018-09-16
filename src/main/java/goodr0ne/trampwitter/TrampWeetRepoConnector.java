@@ -158,6 +158,13 @@ class TrampWeetRepoConnector {
         if (verbose) {
             System.out.println("Hello, i'm TrampWeetRepoConnector.insertTweet()!");
         }
+        if (!tweet.validateStatus().equals("cool")) {
+            if (verbose) {
+                System.out.println("Looks like your TrampWeet validation status " +
+                        "is not cool, this tweet will be not inserted, yo!");
+            }
+            return;
+        }
         if (!isCreated) {
             createTable();
         }
@@ -173,7 +180,7 @@ class TrampWeetRepoConnector {
             stmt.close();
         } catch(Exception e) {
             if (verbose) {
-                System.out.println("This tweet already crawled!");
+                System.out.println("This tweet already stored!");
             }
         } finally {
             try {

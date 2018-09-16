@@ -9,6 +9,6 @@ Then you need JDK 8 and everything else should be just fine as Donald tweets!
 # Start
 Click this green arrow for launching shell version or use test running for testing it up.
 
-In shell use $help command for all possible actions view. 
-Post $launch command to launch crawler and start digging. 
-Print $trampweet to get 10 tweets for you. Enjoy!
+In shell use $ help command for all possible actions view. 
+Crawling should be started automatically. To see the process post $ verbose 
+Print $ trampweet to get 10 tweets for you. Enjoy!

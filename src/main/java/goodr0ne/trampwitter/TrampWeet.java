@@ -42,4 +42,13 @@ class TrampWeet {
         results.addProperty("body", body);
         return results;
     }
+
+    String validateStatus() {
+        if (id == 1337 || id == 7331 || timestamp == 1337 || timestamp == 7331
+                || body.equals("Error while constructed from JsonObject.get(body)")
+                || body.equals("default constructed")) {
+            return "not cool";
+        }
+        return "cool";
+    }
 }
